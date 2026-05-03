@@ -951,3 +951,74 @@ window.onload = function() {
         document.getElementById("loginPage").style.display = "block";
     }
 }
+
+// === LOGIKA PWA CUSTOM INSTALL PROMPT ===
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Mencegah browser menampilkan pop-up install bawaannya sendiri
+    e.preventDefault();
+    // Menyimpan event untuk dipanggil nanti saat tombol ditekan
+    deferredPrompt = e;
+    
+    // Tampilkan TOAST konfirmasi kustom milik kita
+    tampilkanToastInstall();
+});
+
+function tampilkanToastInstall() {
+    const confirmToast = document.getElementById("confirmToast");
+    const overlay = document.getElementById("overlay");
+    
+    // Ubah ikon dan teks Toast
+    confirmToast.querySelector("div").innerText = "🚀";
+    confirmToast.querySelector("p").innerHTML = "Install Aplikasi <b>JURUSKU</b> ke Layar Utama (Home Screen) agar bisa diakses lebih cepat dan tanpa browser!";
+    
+    const btnYa = confirmToast.querySelector(".btn-ya");
+    const btnTidak = confirmToast.querySelector(".btn-tidak");
+    
+    // Ubah Teks Tombol
+    btnYa.innerText = "INSTALL";
+    btnTidak.innerText = "NANTI SAJA";
+    
+    // Aksi jika tombol INSTALL ditekan
+    btnYa.onclick = async () => {
+        tutupToastInstall(); // Tutup toast kita
+        if (deferredPrompt) {
+            // Munculkan prompt instalasi bawaan sistem/browser
+            deferredPrompt.prompt();
+            // Tunggu respon siswa (apakah mereka menekan install atau batal di prompt sistem)
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`Pilihan instalasi: ${outcome}`);
+            deferredPrompt = null;
+        }
+    };
+    
+    // Aksi jika tombol NANTI SAJA ditekan
+    btnTidak.onclick = tutupToastInstall;
+    
+    // Tampilkan Modal/Toast
+    confirmToast.classList.add("show");
+    overlay.classList.add("show");
+}
+
+function tutupToastInstall() {
+    document.getElementById("confirmToast").classList.remove("show");
+    document.getElementById("overlay").classList.remove("show");
+    
+    // Kembalikan fungsi tombol ke pengaturan awal (untuk fitur Tidur) agar tidak error/bentrok
+    setTimeout(() => {
+        const btnYa = document.getElementById("confirmToast").querySelector(".btn-ya");
+        const btnTidak = document.getElementById("confirmToast").querySelector(".btn-tidak");
+        
+        btnYa.innerText = "IYA";
+        btnTidak.innerText = "TIDAK";
+        btnYa.setAttribute("onclick", "confirmSleep(true)");
+        btnTidak.setAttribute("onclick", "confirmSleep(false)");
+    }, 300);
+}
+
+// Notifikasi jika aplikasi sudah sukses terinstal
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    showToast("✅ JURUSKU berhasil diinstal ke perangkatmu!");
+});
