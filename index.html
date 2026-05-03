@@ -21,8 +21,8 @@
     <div style="font-size: 4rem; margin-bottom: 5px; animation: fadeIn 0.5s ease;">🌙</div>
     <p>Masih ada aktivitas yang kosong!<br>Yakin ingin tidur dan mengunci semuanya?</p>
     <div class="confirm-buttons">
-        <button class="btn-ya" onclick="confirmSleep(true)">YA, TIDUR</button>
-        <button class="btn-tidak" onclick="confirmSleep(false)">BATAL</button>
+        <button class="btn-ya" onclick="confirmSleep(true)">IYA</button>
+        <button class="btn-tidak" onclick="confirmSleep(false)">TIDAK</button>
     </div>
 </div>
 
@@ -56,66 +56,6 @@
     </div>
 </div>
 
-<div id="pinPage" class="page" style="display:none; text-align:center;">
-    <div class="card center">
-        <span style="font-size: 3rem;">🔐</span>
-        <h3>Login Cepat</h3>
-        <p id="pinUserLabel" style="font-weight:bold; color:var(--primary); font-size: 1.1rem; margin-top: 5px;"></p>
-        <p style="font-size:0.85rem; color: #64748b; margin-bottom: 5px;">Masukkan 6 Digit PIN Anda</p>
-        
-        <div class="pin-dots" id="loginPinDots">
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-        </div>
-        
-        <div class="pin-pad">
-            <button onclick="addPin('1', 'login')">1</button>
-            <button onclick="addPin('2', 'login')">2</button>
-            <button onclick="addPin('3', 'login')">3</button>
-            <button onclick="addPin('4', 'login')">4</button>
-            <button onclick="addPin('5', 'login')">5</button>
-            <button onclick="addPin('6', 'login')">6</button>
-            <button onclick="addPin('7', 'login')">7</button>
-            <button onclick="addPin('8', 'login')">8</button>
-            <button onclick="addPin('9', 'login')">9</button>
-            <button style="background:transparent; box-shadow:none; cursor:default;"></button>
-            <button onclick="addPin('0', 'login')">0</button>
-            <button onclick="deletePin('login')" style="background:#e2e8f0; font-size:1.2rem;">⌫</button>
-        </div>
-        
-        <button class="primary" style="background:transparent; color:var(--danger); border: 2px solid var(--danger); margin-top:25px;" onclick="switchToFullLogin()">Gunakan Akun Lain</button>
-    </div>
-</div>
-
-<div id="createPinPage" class="page" style="display:none; text-align:center;">
-    <div class="card center">
-        <span style="font-size: 3rem;">🌟</span>
-        <h3>Buat PIN Login Cepat</h3>
-        <p style="font-size:0.85rem; color: #64748b; line-height:1.4; margin-bottom: 5px;">Buat 6 digit PIN agar tidak perlu mengetik password panjang lagi di perangkat ini.</p>
-        
-        <div class="pin-dots" id="createPinDots">
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-        </div>
-        
-        <div class="pin-pad">
-            <button onclick="addPin('1', 'create')">1</button>
-            <button onclick="addPin('2', 'create')">2</button>
-            <button onclick="addPin('3', 'create')">3</button>
-            <button onclick="addPin('4', 'create')">4</button>
-            <button onclick="addPin('5', 'create')">5</button>
-            <button onclick="addPin('6', 'create')">6</button>
-            <button onclick="addPin('7', 'create')">7</button>
-            <button onclick="addPin('8', 'create')">8</button>
-            <button onclick="addPin('9', 'create')">9</button>
-            <button style="background:transparent; box-shadow:none; cursor:default;"></button>
-            <button onclick="addPin('0', 'create')">0</button>
-            <button onclick="deletePin('create')" style="background:#e2e8f0; font-size:1.2rem;">⌫</button>
-        </div>
-        
-        <button class="primary" style="background:#cbd5e1; color:#475569; margin-top:25px;" onclick="skipPin()">Lewati Saja</button>
-    </div>
-</div>
 
 <nav id="menu">
     <button onclick="showPage('leaderboard')" id="btn-leaderboard">🏆<br>Top Skor</button>
@@ -130,7 +70,11 @@
         <div class="lb-header">
             <h2 style="font-size: 1.8rem; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">⭐⭐⭐</h2>
             <h2>TOP SKOR</h2>
-            <div class="lb-header-sub" id="judulLeaderboardBulan">BULAN INI</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+				<button onclick="changeLbMonth(-1)" style="background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: bold;">◀</button>
+				<div class="lb-header-sub" id="judulLeaderboardBulan" style="margin-bottom: 0;">BULAN INI</div>
+				<button onclick="changeLbMonth(1)" style="background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: bold;">▶</button>
+			</div>
             
             <div class="lb-filter-container">
                 <button class="lb-filter-btn active" id="filter-global" onclick="setLbFilter('global')">GLOBAL</button>
@@ -230,7 +174,7 @@
         </div>
         
         <button id="btnSimpanProfil" class="primary" style="margin-top: 15px;" onclick="simpanProfil()">Simpan</button>
-        <button class="primary" style="background: var(--danger); margin-top: 10px;" onclick="logout()">Keluar</button>
+		<button class="primary" style="background: var(--danger); margin-top: 10px;" onclick="konfirmasiLogout()">Keluar</button>
     </div>
 </div>
 

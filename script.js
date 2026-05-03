@@ -6,6 +6,7 @@ let chart = null;
 let currentDate = new Date();
 let data = {}; 
 let usersData = {}; 
+let viewLbDate = new Date(); // Default adalah bulan saat ini
 
 // === TAMBAHAN VARIABEL FITUR AVATAR (Hewan Lucu, Friendly, & Banyak) ===
 const emotAvatars = [
@@ -29,9 +30,6 @@ let originalAvatarData = ""; // Foto asli di database
 let currentAvatarData = "";  // Foto pratinjau sebelum disimpan
 // ======================================
 
-// Variabel untuk PIN
-let currentPinInput = "";
-let pinMode = "login"; // "login" atau "create"
 
 // Variabel Filter Leaderboard (Default: Global)
 let currentLbFilter = "global";
@@ -206,77 +204,6 @@ function updateAvatarDisplay() {
 }
 // === END TAMBAHAN FUNGSI FITUR AVATAR ===
 
-// === LOGIKA SISTEM PIN ===
-function addPin(digit, mode) {
-    if (currentPinInput.length < 6) {
-        currentPinInput += digit;
-        updatePinDots(mode);
-        if (currentPinInput.length === 6) {
-            setTimeout(() => processPin(mode), 200); 
-        }
-    }
-}
-
-function deletePin(mode) {
-    currentPinInput = currentPinInput.slice(0, -1);
-    updatePinDots(mode);
-}
-
-function updatePinDots(mode) {
-    let containerId = mode === 'login' ? 'loginPinDots' : 'createPinDots';
-    let dots = document.getElementById(containerId).children;
-    for(let i=0; i<6; i++) {
-        if(i < currentPinInput.length) {
-            dots[i].classList.add('filled');
-        } else {
-            dots[i].classList.remove('filled');
-        }
-    }
-}
-
-function processPin(mode) {
-    if (mode === 'create') {
-        localStorage.setItem("saved_pin", currentPinInput);
-        showToast("✅ PIN berhasil dibuat!");
-        document.getElementById("createPinPage").style.display = "none";
-        document.getElementById("menu").style.display = "flex";
-        showPage("monitor");
-        tampilTanggal(); loadKebiasaan();
-    } else if (mode === 'login') {
-        let savedPin = localStorage.getItem("saved_pin");
-        if (currentPinInput === savedPin) {
-            showToast("✅ PIN Benar. Membuka data...");
-            document.getElementById("username").value = localStorage.getItem("saved_user");
-            document.getElementById("password").value = localStorage.getItem("saved_pass");
-            login();
-        } else {
-            showToast("❌ PIN Salah!");
-            let container = document.getElementById("loginPinDots");
-            container.classList.add("shake");
-            setTimeout(() => container.classList.remove("shake"), 400);
-            currentPinInput = "";
-            updatePinDots('login');
-        }
-    }
-}
-
-function skipPin() {
-    document.getElementById("createPinPage").style.display = "none";
-    document.getElementById("menu").style.display = "flex";
-    showPage("monitor");
-    tampilTanggal(); loadKebiasaan();
-}
-
-function switchToFullLogin() {
-    localStorage.removeItem("saved_user");
-    localStorage.removeItem("saved_pass");
-    localStorage.removeItem("saved_pin");
-    
-    document.getElementById("pinPage").style.display = "none";
-    document.getElementById("loginPage").style.display = "block";
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
-}
 
 // === LOGIKA E-ASESMEN FULL SCREEN ===
 function mulaiUjian(url) {
@@ -293,7 +220,7 @@ function mulaiUjian(url) {
 }
 
 function closeExam() {
-    if(confirm("Apakah Anda yakin ingin keluar dari halaman ujian? Pastikan jawaban sudah dikirim!")) {
+    if(confirm("Apakah kamu yakin ingin keluar dari halaman ujian? Pastikan jawaban sudah dikirim!")) {
         document.getElementById('examContainer').style.display = "none";
         document.getElementById('examFrame').src = "";
         if (document.exitFullscreen) {
@@ -432,26 +359,12 @@ async function login() {
 
         document.getElementById("filterTanggal").value = formatTanggalKey();
         
-        let savedPin = localStorage.getItem("saved_pin");
-        
-        if (!savedPin) {
-            document.getElementById("loginPage").style.display = "none";
-            document.getElementById("pinPage").style.display = "none";
-            document.getElementById("createPinPage").style.display = "block";
-            pinMode = "create";
-            currentPinInput = "";
-            updatePinDots("create");
-        } else {
-            document.getElementById("loginPage").style.display = "none";
-            document.getElementById("pinPage").style.display = "none";
-            document.getElementById("createPinPage").style.display = "none";
-            document.getElementById("menu").style.display = "flex";
-            showPage("monitor");
-            tampilTanggal(); loadKebiasaan();
-            
-            startRealtimeRefresh();
-        }
-
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("menu").style.display = "flex";
+        showPage("monitor");
+        tampilTanggal(); loadKebiasaan();
+        startRealtimeRefresh();
+		
     } catch (e) { showToast("Gagal terhubung ke server."); }
     
     btn.innerText = "Masuk"; btn.disabled = false;
@@ -521,6 +434,37 @@ function logout() {
     location.reload(); 
 }
 
+// Fungsi untuk memunculkan modal konfirmasi keluar
+function konfirmasiLogout() {
+    // Menggunakan elemen toast konfirmasi yang sudah ada di HTML
+    const confirmToast = document.getElementById("confirmToast");
+    const overlay = document.getElementById("overlay");
+    
+    // Mengubah konten teks di dalam toast konfirmasi agar relevan dengan Logout
+    confirmToast.querySelector("div").innerText = "🚪"; 
+    confirmToast.querySelector("p").innerHTML = "Apakah kamu yakin ingin keluar?<br>kamu harus login ulang nanti.";
+    
+    // Mengubah fungsi pada tombol YA agar memanggil logout asli, dan TIDAK untuk menutup modal
+    confirmToast.querySelector(".btn-ya").setAttribute("onclick", "logout()");
+    confirmToast.querySelector(".btn-tidak").setAttribute("onclick", "tutupKonfirmasiLogout()");
+    
+    // Tampilkan modal
+    confirmToast.classList.add("show");
+    overlay.classList.add("show");
+}
+
+// Fungsi untuk menutup modal jika batal keluar
+function tutupKonfirmasiLogout() {
+    document.getElementById("confirmToast").classList.remove("show");
+    document.getElementById("overlay").classList.remove("show");
+    
+    // Mengembalikan fungsi tombol ke pengaturan awal (untuk fitur Tidur) agar tidak bentrok
+    setTimeout(() => {
+        document.getElementById("confirmToast").querySelector(".btn-ya").setAttribute("onclick", "confirmSleep(true)");
+        document.getElementById("confirmToast").querySelector(".btn-tidak").setAttribute("onclick", "confirmSleep(false)");
+    }, 300);
+}
+
 function getHariIni() {
     let t = formatTanggalKey();
     if (!data[t]) data[t] = {};
@@ -529,23 +473,48 @@ function getHariIni() {
 }
 
 function showPage(id) {
-    if (id !== 'profil' && typeof batalUbahAvatar === 'function') {
+    // 1. Reset Top Skor ke bulan saat ini dan filter GLOBAL jika pindah ke menu lain
+    if (id !== 'leaderboard') {
+        viewLbDate = new Date(); // Reset tanggal ke hari ini
+        currentLbFilter = "global"; // Reset filter ke global
+
+        // Reset visual tombol filter agar kembali aktif di 'GLOBAL'[cite: 2, 3]
+        document.querySelectorAll('.lb-filter-btn').forEach(btn => btn.classList.remove('active'));
+        const globalBtn = document.getElementById('filter-global');
+        if (globalBtn) globalBtn.classList.add('active');
+    }
+
+    // 2. Batalkan pratinjau avatar jika keluar dari menu Profil (ID: setting)[cite: 1, 2]
+    if (id !== 'setting' && typeof batalUbahAvatar === 'function') {
         batalUbahAvatar(false);
     }
 
+    // 3. Sembunyikan semua halaman dan kelola status aktif tombol navigasi[cite: 1, 2, 3]
     document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    
+    // Tampilkan halaman yang dipilih dan aktifkan tombolnya[cite: 1, 2]
     document.getElementById(id).style.display = "block";
     document.getElementById("btn-" + id).classList.add("active");
     
+    // 4. Atur tampilan Greeting Bar (hanya untuk Progres dan Jurnal)[cite: 2, 3]
     if(id === 'dashboard' || id === 'monitor') {
         document.getElementById("greetingBar").style.display = "block";
     } else {
         document.getElementById("greetingBar").style.display = "none";
     }
 
-    if(id === 'dashboard') updateView(); 
-    if(id === 'leaderboard') renderLeaderboard(); 
+    // 5. Logika Refresh Khusus saat membuka halaman
+    if(id === 'dashboard') {
+        updateView(); // Memperbarui grafik progres
+    }
+
+    if(id === 'leaderboard') {
+        // REFRESH: Ambil data terbaru dari Firebase sebelum merender peringkat[cite: 2]
+        loadDatabase().then(() => {
+            renderLeaderboard();
+        });
+    }
 }
 
 function setLbFilter(filter) {
@@ -555,17 +524,31 @@ function setLbFilter(filter) {
     renderLeaderboard();
 }
 
+function changeLbMonth(offset) {
+    viewLbDate.setMonth(viewLbDate.getMonth() + offset);
+    renderLeaderboard();
+}
 
 function renderLeaderboard() {
     let userScoresTotal = {};
     let userCounts = {}; 
     
     const namaBulanArr = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-    const tanggalSekarang = new Date();
-    const bulanSekarang = tanggalSekarang.getMonth() + 1; 
-    const tahunSekarang = tanggalSekarang.getFullYear();
+	const tanggalSekarang = viewLbDate; // Menggunakan tanggal yang dipilih siswa
+	const bulanSekarang = tanggalSekarang.getMonth() + 1; 
+	const tahunSekarang = tanggalSekarang.getFullYear();
     
-    let labelBulan = document.getElementById("judulLeaderboardBulan");
+	
+	const namaBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", 
+                   "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+
+	// Mengambil nama bulan dan tahun dari viewLbDate
+	const labelBulan = namaBulan[viewLbDate.getMonth()];
+	const labelTahun = viewLbDate.getFullYear();
+
+	document.getElementById("judulLeaderboardBulan").innerText = `${labelBulan} ${labelTahun}`;
+
+
     if(labelBulan) {
         labelBulan.innerText = "BULAN " + namaBulanArr[tanggalSekarang.getMonth()];
     }
@@ -955,43 +938,15 @@ function renderRiwayat(keysArr) {
     document.getElementById("historyContainer").innerHTML = historyHtml;
 }
 
-// === FITUR AUTO LOGOUT (1 JAM TIDAK ADA AKTIVITAS) ===
-let inactivityTimer;
-function resetInactivityTimer() {
-    clearTimeout(inactivityTimer);
-    // 3.600.000 ms = 1 Jam
-    inactivityTimer = setTimeout(() => {
-        if (currentUser) {
-            showToast("⚠️ Sesi habis karena tidak ada aktivitas selama 1 jam.");
-            setTimeout(() => { logout(); }, 2000); 
-        }
-    }, 3600000); 
-}
 
 window.onload = function() {
-    resetInactivityTimer(); 
-    document.onmousemove = resetInactivityTimer;
-    document.onkeypress = resetInactivityTimer;
-    document.ontouchstart = resetInactivityTimer; 
-    document.onclick = resetInactivityTimer;
-
     let u = localStorage.getItem("jurusku_user"); 
     let p = localStorage.getItem("jurusku_pass");
-    
-    let savedU = localStorage.getItem("saved_user");
-    let savedPin = localStorage.getItem("saved_pin");
 
     if (u && p) { 
         document.getElementById("username").value = u; 
         document.getElementById("password").value = p; 
         login(); 
-    } else if (savedU && savedPin) {
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("pinPage").style.display = "block";
-        document.getElementById("pinUserLabel").innerText = "Halo, " + savedU;
-        pinMode = "login";
-        currentPinInput = "";
-        updatePinDots("login");
     } else {
         document.getElementById("loginPage").style.display = "block";
     }

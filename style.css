@@ -48,7 +48,7 @@ header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)
 .confirm-buttons button { flex: 1; padding: 14px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: transform 0.1s; }
 .confirm-buttons button:active { transform: scale(0.95); }
 .btn-ya { background-color: var(--primary); color: white; }
-.btn-tidak { background-color: #cbd5e1; color: #475569; }
+.btn-tidak { background-color: var(--danger); color: white; }
 
 /* NAV MENU - UPDATE UNTUK MEMBUAT TOMBOL PRESISI DI TENGAH */
 nav { position: fixed; bottom: 0; left: 0; right: 0; display: none; background: white; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 1000; align-items: center; justify-content: space-between; }
@@ -73,13 +73,6 @@ input[type="file"] { padding: 10px; background: #f8fafc; cursor: pointer; }
 .point-tag { float: right; background: #e1f5fe; color: #0288d1; padding: 2px 8px; border-radius: 8px; font-size: 0.75rem; }
 .center { text-align: center; }
 
-.pin-dots { display: flex; justify-content: center; gap: 12px; margin: 25px 0; }
-.pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--primary); transition: all 0.2s ease; background-color: transparent;}
-.pin-dot.filled { background-color: var(--primary); transform: scale(1.1); }
-
-.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 260px; margin: 0 auto; }
-.pin-pad button { padding: 0; font-size: 1.5rem; font-weight: 800; border-radius: 50%; border: none; background: #f1f5f9; color: var(--text); cursor: pointer; transition: background 0.1s, transform 0.1s; width: 65px; height: 65px; margin: auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
-.pin-pad button:active { background: #e2e8f0; transform: scale(0.92); }
 
 .shake { animation: shake 0.4s; }
 @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 50% {transform: translateX(10px);} 75% {transform: translateX(-10px);} }
@@ -107,8 +100,12 @@ input[type="file"] { padding: 10px; background: #f8fafc; cursor: pointer; }
 
 .lb-top-section { padding: 30px 15px 0px 15px; text-align: center; color: white; }
 .lb-header h2 { margin: 5px 0; font-size: 1.6rem; text-shadow: 0 2px 5px rgba(0,0,0,0.15); }
-.lb-header-sub { font-size: 1rem; font-weight: 800; margin-bottom: 15px; opacity: 0.9; text-shadow: 0 1px 3px rgba(0,0,0,0.1); text-transform: uppercase; }
-
+.lb-header-sub {
+    font-size: 1.1rem; /* Sedikit dikecilkan agar muat dengan tahun[cite: 3] */
+    font-weight: 700;
+    min-width: 150px; /* Memberi ruang konsisten untuk teks bulan & tahun[cite: 3] */
+    text-align: center;
+}
 .lb-filter-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 65px; } 
 .lb-filter-btn { background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0.8; }
 .lb-filter-btn.active { background: white; color: #e74c3c; transform: scale(1.15); opacity: 1; border-color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
@@ -142,3 +139,8 @@ input[type="file"] { padding: 10px; background: #f8fafc; cursor: pointer; }
 .lb-item-name { font-weight: 800; font-size: 0.85rem; color: #334155; text-transform: uppercase; word-wrap: break-word; line-height: 1.2;}
 .lb-item-score { font-weight: 900; color: var(--primary); font-size: 1.1rem; margin-left: 10px;}
 .lb-disclaimer { text-align: center; font-size: 0.75rem; color: #94a3b8; padding: 15px; background: #f8fafc;}
+
+button[onclick^="changeLbMonth"]:active {
+    transform: scale(0.9);
+    background: rgba(255,255,255,0.4) !important;
+}
