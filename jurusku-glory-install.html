@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JURUSKU - Glory Installation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1db954;
+            --primary-dark: #15803d;
+            --glory-gold: #FFD700;
+            --epic-blue: #3498db;
+            --bg-dark: #0a0f0d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+        }
+
+        /* Epic Background Animation */
+        .background-animate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0f0d 0%, #15803d 50%, #0a0f0d 100%);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Particles Effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: floatUp var(--duration) linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0); opacity: 0; }
+            to { transform: translateY(-10vh) scale(1.5); opacity: 0.5; }
+        }
+
+        /* Content Styling */
+        .glory-container {
+            padding: 20px;
+            max-width: 600px;
+            animation: fadeInScale 1.2s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .main-icon {
+            font-size: 10rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 30px var(--primary));
+            animation: pulseIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.9;
+            margin-bottom: 15px;
+            background: linear-gradient(to bottom, #fff 40%, var(--glory-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        p {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #e2e8f0;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Epic Button */
+        .btn-glory {
+            position: relative;
+            display: inline-block;
+            padding: 22px 60px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, var(--primary), #2ecc71);
+            border-radius: 100px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(29, 185, 84, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-glory::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .btn-glory:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(29, 185, 84, 0.6);
+            border-color: white;
+        }
+
+        .btn-glory:hover::before {
+            left: 100%;
+        }
+
+        .btn-glory:active {
+            transform: scale(0.95);
+        }
+
+        .sub-text {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--glory-gold);
+            font-weight: 700;
+            opacity: 0.8;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-animate"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="glory-container">
+        <div class="main-icon">🚀</div>
+        <h1>JURUSKU GLORY</h1>
+        <p>Mulai perjalanan belajarmu dengan pengalaman yang lebih megah dan cepat.</p>
+        
+        <a href="https://haripahlawan24-tech.github.io/aplikasi/" class="btn-glory">INSTALL SEKARANG</a>
+        
+        <div class="sub-text">✨ Education Excellence ✨</div>
+    </div>
+
+    <script>
+        // Generate Epic Particles
+        const container = document.getElementById('particles');
+        const particleCount = 40;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 8 + 2 + 'px';
+            particle.style.width = size;
+            particle.style.height = size;
+            
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.setProperty('--duration', (Math.random() * 10 + 5) + 's');
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            
+            container.appendChild(particle);
+        }
+    </script>
+
+</body>
+</html>

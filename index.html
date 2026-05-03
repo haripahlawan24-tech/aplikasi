@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1db954">
     <title>JURUSKU</title>
+	<link rel="manifest" href="manifest.json">
+	<link rel="apple-touch-icon" href="icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -210,6 +212,20 @@
 </div>
 
 <script src="script.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/aplikasi/sw.js')
+        .then(registration => {
+          console.log('Service Worker JURUSKU berhasil didaftarkan', registration.scope);
+        })
+        .catch(err => {
+          console.log('Pendaftaran Service Worker gagal: ', err);
+        });
+    });
+  }
+</script>
 
 </body>
 </html>
